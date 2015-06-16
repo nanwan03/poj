@@ -7,7 +7,7 @@ public class Main {
 		while (true) {
 			int testcase = in.nextInt();
 			if (testcase == 0) {
-				System.exit(-1);
+				System.exit(0);
 			}
 			double min = Double.POSITIVE_INFINITY;
 			while (testcase-- > 0) {

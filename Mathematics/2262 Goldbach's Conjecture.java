@@ -11,7 +11,7 @@ public class Main {
 		while (true) {
 			int input = Integer.parseInt(in.nextLine());
 			if (input == 0) {
-				System.exit(-1);
+				System.exit(0);
 			}
 			for (int i = 3; i <= input / 2; ++i) {
 				if(isPrime[i] && isPrime[input - i]) {
