@@ -1,5 +1,5 @@
 /*
- * RE
+ * MLE
  */
 import java.io.*;
 import java.util.*;
@@ -25,20 +25,19 @@ class TreeNode {
 public class Main {
 	private static int ret = 1;
 	private static StringBuilder sb = new StringBuilder();
-	public static void main(String[] args) throws IOException {
-		BufferedReader cin = new BufferedReader(new InputStreamReader(System.in));
-		int testcase = Integer.parseInt(cin.readLine());
+	public static void main(String[] args) {
+		Scanner in = new Scanner(System.in);
+		int testcase = in.nextInt();
 		while (testcase-- > 0) {
-			int size = Integer.parseInt(cin.readLine());
+			int size = in.nextInt();
 			TreeNode[] nodes = new TreeNode[size + 1];
 			ret = 1;
 			for (int index = 0; index <= size; ++index) {
 				nodes[index] = new TreeNode(index);
 			}
 			for (int index = 1; index < size; ++index) {
-				String[] strs = cin.readLine().split("\\s+");
-				int parent = Integer.parseInt(strs[0]);
-				int child = Integer.parseInt(strs[1]);
+				int parent = in.nextInt();
+				int child = in.nextInt();
 				nodes[child].isRoot = false;
 				nodes[parent].children.add(nodes[child]);
 			}
@@ -49,9 +48,8 @@ public class Main {
 					break;
 				}
 			}
-			String[] strs = cin.readLine().split("\\s+");
-			int u = Integer.parseInt(strs[0]);
-			int v = Integer.parseInt(strs[1]);
+			int u = in.nextInt();
+			int v = in.nextInt();
 			LCA(root, nodes[u], nodes[v]);
 		}
 		System.out.println(sb.toString());
