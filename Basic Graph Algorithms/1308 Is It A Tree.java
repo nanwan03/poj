@@ -27,31 +27,24 @@ public class Main {
 					if (min == 0 && max == 0) {
 						output(isTree, testcase);
 					} else {
-						if (!isTree) {
-							output(isTree, testcase);
-						} else {
-							int zeroInDegree = 0;
-							int moreThan2Degree = 0;
-							for (int i = min; i <= max; ++i) {
-								if (visited[i] && inDegree[i] == 0) {
-									zeroInDegree++;
-								}
-								if (visited[i] && inDegree[i] > 1) {
-									moreThan2Degree++;
-								}
+						int zeroInDegree = 0;
+						int moreThan2Degree = 0;
+						for (int i = min; i <= max; ++i) {
+							if (visited[i] && inDegree[i] == 0) {
+								zeroInDegree++;
 							}
-							if (zeroInDegree == 1 && moreThan2Degree == 0) {
-								isTree = true;
-							} else {
-								isTree = false;
+							if (visited[i] && inDegree[i] > 1) {
+								moreThan2Degree++;
 							}
-							output(isTree, testcase);
 						}
+						if (zeroInDegree == 1 && moreThan2Degree == 0) {
+							isTree = true;
+						} else {
+							isTree = false;
+						}
+						output(isTree, testcase);
 					}
 					break;
-				}
-				if (a == b) {
-					isTree = false;
 				}
 				inDegree[b]++;
 				visited[a] = true;
