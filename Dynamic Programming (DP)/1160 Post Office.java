@@ -13,23 +13,27 @@ public class Main {
 		for (int i = 0; i < villageNum; ++i) {
 			input[i] = in.nextInt();
 		}
-		init(dis, input);
-		for (int i = 0; i < villageNum; ++i) {
-			Arrays.fill(dp[i], Integer.MAX_VALUE / 2);
-		}
-		for (int i = 0; i < villageNum; ++i) {
-			dp[i][0] = dis[0][i];
-		}
-		for (int k = 1; k < postNum; ++k) {
+		if (postNum >= villageNum) {
+			System.out.println("0");
+		} else {
+			init(dis, input);
 			for (int i = 0; i < villageNum; ++i) {
-				for (int j = 0; j < i; ++j) {
-					if (dp[j][k - 1] + dis[j + 1][i] < dp[i][k]) {
-						dp[i][k] = dp[j][k - 1] + dis[j + 1][i];
+				Arrays.fill(dp[i], Integer.MAX_VALUE / 2);
+			}
+			for (int i = 0; i < villageNum; ++i) {
+				dp[i][0] = dis[0][i];
+			}
+			for (int k = 1; k < postNum; ++k) {
+				for (int i = 0; i < villageNum; ++i) {
+					for (int j = 0; j < i; ++j) {
+						if (dp[j][k - 1] + dis[j + 1][i] < dp[i][k]) {
+							dp[i][k] = dp[j][k - 1] + dis[j + 1][i];
+						}
 					}
 				}
 			}
+			System.out.println(dp[villageNum - 1][postNum - 1]);
 		}
-		System.out.println(dp[villageNum - 1][postNum - 1]);
 	}
 	private static void init(int[][] dis, int[] input) {
 		for (int i = 0; i < dis.length - 1; ++i) {
