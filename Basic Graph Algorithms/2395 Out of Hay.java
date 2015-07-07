@@ -21,9 +21,9 @@ public class Main {
 			map[u][v] = Math.min(map[u][v], dis);
 			map[v][u] = Math.min(map[v][u], dis);
 		}
-		System.out.println(prime(map, size));
+		System.out.println(prim(map, size));
 	}
-	private static int prime(int[][] map, int size) {
+	private static int prim(int[][] map, int size) {
 		int max = 0;
 		int[] lowCost = new int[size];
 		boolean[] used = new boolean[size];
