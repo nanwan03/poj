@@ -35,14 +35,14 @@ public class Main {
 				int dist = in.nextInt();
 				edges[index++] = new Edge(from, to, -dist);
 			}
-			if (isExistNegativeLoop(nodeNum, index, edges)) {
+			if (bellmanFord(nodeNum, index, edges)) {
 				System.out.println("YES");
 			} else {
 				System.out.println("NO");
 			}
 		}
 	}
-	private static boolean isExistNegativeLoop(int nodeNum, int edgeNum, Edge[] edges) {
+	private static boolean bellmanFord(int nodeNum, int edgeNum, Edge[] edges) {
 		int[] dist = new int[nodeNum];
 		for (int i = 0; i < nodeNum; ++i) {
 			for (int j = 0; j < edgeNum; ++j) {
