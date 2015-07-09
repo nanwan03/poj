@@ -19,9 +19,7 @@ public class Main {
 			if (nodeNumber == 0) {
 				System.exit(0);
 			}
-			double[][] distance = new double[nodeNumber + 1][nodeNumber + 1];
-			boolean[] visited = new boolean[nodeNumber + 1];
-			double[] dis = new double[nodeNumber + 1];
+			double[][] map = new double[nodeNumber + 1][nodeNumber + 1];
 			Node[] nodes = new Node[nodeNumber + 1];
 			for (int i = 1; i <= nodeNumber; ++i) {
 				String[] strs = in.nextLine().split("\\s+");
@@ -32,19 +30,21 @@ public class Main {
 			in.nextLine();
 			for (int i = 1; i <= nodeNumber; ++i) {
 				for (int j = 1; j <= i - 1; ++j) {
-					distance[i][j] = distance(nodes, i, j);
-					distance[j][i] = distance[i][j];
+					double distance = distance(nodes, i, j);
+					map[i][j] = distance;
+					map[j][i] = distance;
 				}
 			}
-			dijkstra(distance, visited, dis, nodes);
 			System.out.println("Scenario #" + testcase++);
-			System.out.print(String.format("Frog Distance = %.3f\n\n", dis[2]));
+			dijkstra(map, nodes);
 		}
 	}
 	private static double distance(Node[] nodes, int x, int y) {
 		return Math.sqrt((nodes[x].x - nodes[y].x) * (nodes[x].x - nodes[y].x) + (nodes[x].y - nodes[y].y) * (nodes[x].y - nodes[y].y));
 	}
-	private static void dijkstra(double[][] distance, boolean[] visited, double[] dis, Node[] nodes) {
+	private static void dijkstra(double[][] distance, Node[] nodes) {
+		boolean[] visited = new boolean[nodes.length];
+		double[] dis = new double[nodes.length];
 		for (int i = 1; i < nodes.length; ++i) {
 			dis[i] = distance[1][i];
 		}
@@ -63,5 +63,6 @@ public class Main {
 				dis[j] = Math.min(dis[j], Math.max(dis[rst], distance[rst][j]));
 			}
 		}
+		System.out.print(String.format("Frog Distance = %.3f\n\n", dis[2]));
 	}
 }
