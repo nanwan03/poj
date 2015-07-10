@@ -28,10 +28,10 @@ public class Main {
 			}
 			int start = in.nextInt();
 			int end = in.nextInt();
-			dijkstra(start, end, edges, nodeNumber, pathNumber);
+			dijkstra(start, end, edges, nodeNumber);
 		}
 	}
-	private static void dijkstra(int start, int end, List<List<Edge>> edges, int nodeNumber, int pathNumber) {
+	private static void dijkstra(int start, int end, List<List<Edge>> edges, int nodeNumber) {
 		int[][] distance = new int[2][nodeNumber + 1];
 		int[][] count = new int[2][nodeNumber + 1];
 		boolean[][] visited = new boolean[2][nodeNumber + 1];
