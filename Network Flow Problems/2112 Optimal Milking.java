@@ -33,7 +33,7 @@ public class Main {
 		while (left <= right) {
 			int mid = left + (right - left) / 2;
 			int[][] matrix = build(mid, map, machineNumber, cowNumber, start, end, maxCap);
-			int sum = edmondsKarp(start, end, matrix);
+			int sum = edmondsKarp(matrix, start, end);
 			if (sum == cowNumber) {
 				rst = mid;
 				right = mid - 1;
@@ -60,7 +60,7 @@ public class Main {
 		}
 		return matrix;
 	}
-	private static int edmondsKarp(int start, int end, int[][] matrix) {
+	private static int edmondsKarp(int[][] matrix, int start, int end) {
 		int rst = 0;
 		int[] prev = new int[matrix.length];
 		while (bfs(matrix, prev, start, end)) {

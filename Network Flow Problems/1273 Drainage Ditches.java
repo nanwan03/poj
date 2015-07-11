@@ -16,10 +16,10 @@ public class Main {
 			}
 			int start = 1;
 			int end = nodeNumber;
-			System.out.println(edmondsKarp(start, end, map));
+			System.out.println(edmondsKarp(map, start, end));
 		}
 	}
-	private static int edmondsKarp(int start, int end, int[][] map) {
+	private static int edmondsKarp(int[][] map, int start, int end) {
 		int rst = 0;
 		int[] prev = new int[map.length];
 		while (bfs(map, prev, start, end)) {
