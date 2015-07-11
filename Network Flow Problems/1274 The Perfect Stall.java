@@ -17,10 +17,10 @@ public class Main {
 					map[i][prefer] = true;
 				}
 			}
-			System.out.println(hungary(map, linker, cowNumber, stallNumber));
+			System.out.println(hungarian(map, linker, cowNumber, stallNumber));
 		}
 	}
-	private static int hungary(boolean[][] map, int[] linker, int cowNumber, int stallNumber) {
+	private static int hungarian(boolean[][] map, int[] linker, int cowNumber, int stallNumber) {
 		int rst = 0;
 		for (int i = 1; i <= cowNumber; ++i) {
 			boolean[] used = new boolean[stallNumber + 1];
