@@ -8,7 +8,6 @@ public class Main {
 			int pathNumber = in.nextInt();
 			int nodeNumber = in.nextInt();
 			int[][] map = new int[nodeNumber + 1][nodeNumber + 1];
-			int[] prev = new int[nodeNumber + 1];
 			for (int i = 0; i < pathNumber; ++i) {
 				int from = in.nextInt();
 				int to = in.nextInt();
@@ -17,15 +16,13 @@ public class Main {
 			}
 			int start = 1;
 			int end = nodeNumber;
-			System.out.println(maxFlow(start, end, map, prev));
+			System.out.println(edmondsKarp(start, end, map));
 		}
 	}
-	private static int maxFlow(int start, int end, int[][] map, int[] prev) {
+	private static int edmondsKarp(int start, int end, int[][] map) {
 		int rst = 0;
-		while (true) {
-			if (!bfs(map, prev, start, end)) {
-				return rst;
-			}
+		int[] prev = new int[map.length];
+		while (bfs(map, prev, start, end)) {
 			int min = 0x3f3f3f3f;
 			for (int i = end; i != start; i = prev[i]) {
 				min = Math.min(min, map[prev[i]][i]);
@@ -36,21 +33,22 @@ public class Main {
 			}
 			rst += min;
 		}
+		return rst;
 	}
 	private static boolean bfs(int[][] map, int[] prev, int start, int nodeNumber) {
+		Arrays.fill(prev, -1);
+		prev[start] = 0;
 		Queue<Integer> queue = new LinkedList<Integer>();
-		boolean[] visited = new boolean[nodeNumber + 1];
 		queue.offer(start);
 		while (!queue.isEmpty()) {
 			int first = queue.poll();
-			if (first == nodeNumber) {
-				return true;
-			}
 			for (int i = 1; i <= nodeNumber; ++i) {
-				if (!visited[i] && map[first][i] != 0) {
+				if (prev[i] == -1 && map[first][i] != 0) {
 					queue.offer(i);
-					visited[i] = true;
 					prev[i] = first;
+					if (i == nodeNumber) {
+						return true;
+					}
 				}
 			}
 		}
