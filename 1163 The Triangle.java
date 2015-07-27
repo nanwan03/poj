@@ -12,15 +12,12 @@ public class Main {
 				input[i][j] = in.nextInt();
 			}
 		}
-		int[][] dp = new int[size + 1][size + 1];
-		for (int i = 1; i <= size; ++i) {
-			dp[size][i] = input[size][i];
-		}
+		int[] dp = input[size];
 		for (int i = size - 1; i >= 1; --i) {
 			for (int j = 1; j <= i; ++j) {
-				dp[i][j] = Math.max(dp[i + 1][j], dp[i + 1][j + 1]) + input[i][j];
+				dp[j] = Math.max(dp[j], dp[j + 1]) + input[i][j];
 			}
 		}
-		System.out.println(dp[1][1]);
+		System.out.println(dp[1]);
 	}
 }
