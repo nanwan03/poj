@@ -40,26 +40,31 @@ public class Main {
 		}
 		if (!isSolveable(input)) {
 			System.out.println("unsolvable");
-		}
-		if (dbfs(getPermutationIndex(input))) {
-			int nMoves = 0;
-			int nPos = startIndex[0];
-			do {
-				result[nMoves++] = queues[0][nPos].move;
-				nPos = queues[0][nPos].father;
-			} while (nPos != 0);
-			for (int i = nMoves - 1; i >= 0; --i) {
-				System.out.print(result[i]);
-			}
-			nMoves = 0;
-			nPos = startIndex[1];
-			do {
-				System.out.print(queues[1][nPos].move);
-				nPos = queues[1][nPos].father;
-			} while (nPos != 0);
-			System.out.println("");
 		} else {
-			System.out.println("unsolvable");
+			if (dbfs(getPermutationIndex(input))) {
+				if (startIndex[0] > 0) {
+					int nMoves = 0;
+					int nPos = startIndex[0];
+					do {
+						result[nMoves++] = queues[0][nPos].move;
+						nPos = queues[0][nPos].father;
+					} while (nPos > 0);
+					for (int i = nMoves - 1; i >= 0; --i) {
+						System.out.print(result[i]);
+					}
+				}
+				if (startIndex[1] > 0) {
+					int nMoves = 0;
+					int nPos = startIndex[1];
+					do {
+						System.out.print(queues[1][nPos].move);
+						nPos = queues[1][nPos].father;
+					} while (nPos > 0);
+				}
+				System.out.println("");
+			} else {
+				System.out.println("unsolvable");
+			}
 		}
 	}
 	private static boolean isSolveable(char[] input) {
@@ -117,6 +122,8 @@ public class Main {
 		qTail[0] = qTail[1] = 1;
 		queues[0][qHead[0]] = new Node(statusIndex, -1, '0');
 		queues[1][qHead[1]] = new Node(goalStatus, -1, '0');
+		flags[0][statusIndex] = true;
+		flags[1][goalStatus] = true;
 		while (qHead[0] != qTail[0] && qHead[1] != qTail[1]) {
 			int expandIndex = (qTail[0] - qHead[0]) < (qTail[1] - qHead[1]) ? 0 : 1;
 			boolean flag = expand(expandIndex);

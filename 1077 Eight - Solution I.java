@@ -1,5 +1,7 @@
 import java.util.*;
 
+import bailian.Node;
+
 class Node {
 	int status;
 	int father;
@@ -38,20 +40,21 @@ public class Main {
 		}
 		if (!isSolveable(input)) {
 			System.out.println("unsolvable");
-		}
-		if (bfs(getPermutationIndex(input))) {
-			int nMoves = 0;
-			int nPos = qHead;
-			do {
-				result[nMoves++] = queues[nPos].move;
-				nPos = queues[nPos].father;
-			} while (nPos != 0);
-			for (int i = nMoves - 1; i >= 0; --i) {
-				System.out.print(result[i]);
-			}
-			System.out.println("");
 		} else {
-			System.out.println("unsolvable");
+			if (bfs(getPermutationIndex(input))) {
+				int nMoves = 0;
+				int nPos = qHead;
+				do {
+					result[nMoves++] = queues[nPos].move;
+					nPos = queues[nPos].father;
+				} while (nPos != 0);
+				for (int i = nMoves - 1; i >= 0; --i) {
+					System.out.print(result[i]);
+				}
+				System.out.println("");
+			} else {
+				System.out.println("unsolvable");
+			}
 		}
 	}
 	private static boolean isSolveable(char[] input) {
