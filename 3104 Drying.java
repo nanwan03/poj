@@ -18,17 +18,15 @@ public class Main {
 			while (left + 1 < right) {
 				int mid = left + (right - left) / 2;
 				if (check(mid, cloths, ability)) {
-					right = mid - 1;
+					right = mid;
 				} else {
 					left = mid + 1;
 				}
 			}
 			if (check(left, cloths, ability)) {
 				System.out.println(left);
-			} else if (check(right, cloths, ability)){
-				System.out.println(right);
 			} else {
-				System.out.println(right + 1);
+				System.out.println(right);
 			}
 		}
 	}
