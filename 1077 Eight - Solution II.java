@@ -1,225 +1,176 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.*;
 
 class Node {
-	int status;
-	int father;
-	char move;
-	Node(int status, int father, char move) {
-		this.status = status;
-		this.father = father;
-		this.move = move;
-	}
+	char[][] graph = new char[3][3];
+	int x;
+	int y;
+	int n;
 }
+
+class Path {
+	int pre;
+	int dir;
+}
+
 public class Main {
-	private static int goalStatus = 46233;
-	private static boolean[][] flags = new boolean[2][362880];
-	private static final int MAX = 400000;;
-	private static char[] result = new char[MAX];
-	private static Node[][] queues = new Node[2][MAX];
-	private static int[] qHead = new int[2];
-	private static int[] qTail = new int[2];
-	private static char[] moves = {'l', 'r', 'u', 'd'};
-	private static int[] factorial = new int[9];
-	private static int[] startIndex = new int[2];
+	private static final int N = 362882;
+	private static final int[] frc = new int[]{ 1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880 };
+	private static int[] hash1 = new int[N];
+	private static int[] hash2 = new int[N];
+	private static int[][] dir = new int[][] {{1,0},{-1,0},{0,-1},{0,1}};
+	private static char[] f1 = new char[] {'d', 'u', 'l', 'r'};
+	private static char[] f2 = new char[] {'u', 'd', 'r', 'l'};
+	private static Node goal = new Node();
+	private static Node source = new Node();
+	private static Path[] path1 = new Path[N / 2];
+	private static Path[] path2 = new Path[N / 2];
+	private static int n1 = 0;
+	private static int n2 = 0;
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
-		factorial[0] = factorial[1] = 1;
-		for(int i = 2; i < 9; ++i) {
-			factorial[i] = i * factorial[i - 1];
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				goal.graph[i][j] = (char)(i * 3 + j + 1 +'0');
+			}
 		}
-		//goalStatus = getPermutationIndex("123456780".toCharArray());
+		goal.x = 2;
+		goal.y = 2;
 		String[] strs = in.nextLine().split("\\s+");
-		char[] input = new char[9];
-		for (int i = 0; i < strs.length; ++i) {
-			if (strs[i].equals("x")) {
-				input[i] = '0';
-			} else {
-				input[i] = strs[i].charAt(0);
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				source.graph[i][j] = strs[i * 3 + j].charAt(0);
+				if (source.graph[i][j] == 'x') {
+						source.graph[i][j] = '9';
+						source.x = i;
+						source.y = j;
+				}
 			}
 		}
-		if (!isSolveable(input)) {
+		if (hash(goal.graph) == hash(source.graph)) {
 			System.out.println("unsolvable");
+		} else if (bfs()){
+			int m = 0;
+			int[] d = new int[1000];
+			while (n2 > 0) {
+				d[m++] = path2[n2].dir;
+				n2 = path2[n2].pre;
+			}
+			for (int i = m - 1; i >= 0; --i) {
+				System.out.print(f1[d[i]]);
+			}
+			while (n1 > 0) {
+				System.out.print(f2[path1[n1].dir]);
+				n1 = path1[n1].pre;
+			}
+			System.out.println("");
 		} else {
-			if (dbfs(getPermutationIndex(input))) {
-				if (startIndex[0] > 0) {
-					int nMoves = 0;
-					int nPos = startIndex[0];
-					do {
-						result[nMoves++] = queues[0][nPos].move;
-						nPos = queues[0][nPos].father;
-					} while (nPos > 0);
-					for (int i = nMoves - 1; i >= 0; --i) {
-						System.out.print(result[i]);
-					}
-				}
-				if (startIndex[1] > 0) {
-					int nMoves = 0;
-					int nPos = startIndex[1];
-					do {
-						System.out.print(queues[1][nPos].move);
-						nPos = queues[1][nPos].father;
-					} while (nPos > 0);
-				}
-				System.out.println("");
-			} else {
-				System.out.println("unsolvable");
-			}
+			System.out.println("unsolvable");
 		}
 	}
-	private static boolean isSolveable(char[] input) {
-		int sumOri = 0;
-		for (int i = 0; i < 9; ++i) {
-			if (input[i] == '0') {
-				continue;
-			}
-			for (int j = 0; j < i; ++j) {
-				if (input[j] != '0' && input[j] < input[i]) {
-					sumOri++;
-				}
-			}
-		}
-		return (sumOri & 1) == 0;
+	private static boolean judge(int x, int y) {
+		return (x >= 0 && x < 3 && y >= 0 && y < 3);
 	}
-	private static int getPermutationIndex(char[] input) {
-		int num = 0;
-		boolean[] used = new boolean[9];
-		for (int i = 0; i < 9; ++i) {
-			int n = 0;
-			for (int j = 0; j < (input[i] - '0'); ++j) {
-				if (!used[j]) {
-					++n;
-				}
-			}
-			num += n * factorial[8 - i];
-			used[(input[i] - '0')] = true;
-		}
-		return num;
+	private static int hash(char[][] graph) {
+		int v = 0;  
+	    for (int i = 0; i < 9; ++i)  
+	    {  
+	        int a = graph[i / 3][i % 3]-'0';  
+	        int cnt = 0;  
+	        for (int j = i + 1; j < 9; ++j)  
+	        {  
+	            int b = graph[j / 3][j % 3]-'0'; 
+	            if (b < a) {
+	            	cnt++;  
+	            }
+	        } 
+	        v += cnt * frc[a-1];  
+	    }  
+	    return v;  
 	}
-	private static char[] getPermutationByIndex(int index) {
-		char[] output = new char[9];
-		boolean[] used = new boolean[9];
-		for (int i = 0; i < 9; ++i) {
-			int j = 0;
-			for (j = 0; j < 9; ++j) {
-				if (!used[j]) {
-					if (factorial[8 - i] >= index + 1) {
-						break;
-					} else {
-						index -= factorial[8 - i];
+	private static boolean bfs() {
+		Queue<Node> p = new LinkedList<Node>();
+		Queue<Node> q = new LinkedList<Node>();
+		source.n = 0;
+		goal.n = 0;
+		p.offer(goal);
+		q.offer(source);
+		hash1[hash(goal.graph)] = 1;
+		hash2[hash(source.graph)] = 1;
+		while (!p.isEmpty() && !q.isEmpty()) {
+			if (!p.isEmpty()) {
+				Node top = p.poll();
+				for (int i = 0; i < 4; ++i) {
+					Node cur = deepCopy(top);
+					cur.x = top.x + dir[i][0];
+					cur.y = top.y + dir[i][1];
+					if (judge(cur.x, cur.y)) {
+						swap(cur.graph, top.x, top.y, cur.x, cur.y);
+						int v = hash(cur.graph);
+						if (hash2[v] != 0) {
+							path1[++n1] = new Path();
+							path1[n1].pre = cur.n;
+							path1[n1].dir = i;
+							n2 = hash2[v] - 1;
+							return true;
+						}
+						if (hash1[v] == 0) {
+							cur.n = ++n1;
+							path1[n1] = new Path();
+							path1[n1].pre = top.n;  
+	                        path1[n1].dir = i;  
+	                        hash1[v] = n1+1;  
+	                        p.offer(cur);
+						}
 					}
 				}
 			}
-			used[j] = true;
-			output[i] = (char)(j + '0');
-		}
-		return output;
-	}
-	private static boolean dbfs(int statusIndex) {
-		Arrays.fill(flags[0], false);
-		Arrays.fill(flags[1], false);
-		qHead[0] = qHead[1] = 0;
-		qTail[0] = qTail[1] = 1;
-		queues[0][qHead[0]] = new Node(statusIndex, -1, '0');
-		queues[1][qHead[1]] = new Node(goalStatus, -1, '0');
-		flags[0][statusIndex] = true;
-		flags[1][goalStatus] = true;
-		while (qHead[0] != qTail[0] && qHead[1] != qTail[1]) {
-			int expandIndex = (qTail[0] - qHead[0]) < (qTail[1] - qHead[1]) ? 0 : 1;
-			boolean flag = expand(expandIndex);
-			if (flag) {
-				return true;
-			}
-		}
-		while (qHead[0] != qTail[0]) {
-			boolean flag = expand(0);
-			if (flag) {
-				return true;
-			}
-		}
-		while (qHead[1] != qTail[1]) {
-			boolean flag = expand(1);
-			if (flag) {
-				return true;
+			if (!q.isEmpty()) {
+				Node top = q.poll();
+	            for (int i = 0; i < 4; ++i) {  
+	                Node cur = deepCopy(top);  
+	                cur.x = top.x + dir[i][0];
+	                cur.y = top.y + dir[i][1];  
+	                if (judge(cur.x,cur.y)) {  
+	                    swap(cur.graph, top.x, top.y, cur.x, cur.y);  
+	                    int v = hash(cur.graph);  
+	                    if(hash1[v] != 0)  
+	                    {  
+	                    	path2[++n2] = new Path();
+	                        path2[n2].pre = cur.n;  
+	                        path2[n2].dir = i;  
+	                        n1 = hash1[v]-1;  
+	                        return true;  
+	                    }  
+	                    if(hash2[v] == 0)
+	                    {  
+	                        cur.n = ++n2;
+	                        path2[n2] = new Path();
+	                        path2[n2].pre = top.n;  
+	                        path2[n2].dir = i;  
+	                        hash2[v] = n2+1;  
+	                        q.offer(cur);
+	                    }  
+	                }  
+	            }  
 			}
 		}
 		return false;
 	}
-	private static boolean expand(int expandIndex) {
-		int curStatus = queues[expandIndex][qHead[expandIndex]].status;
-		if (flags[1 - expandIndex][curStatus]) {
-			startIndex[expandIndex] = qHead[expandIndex];
-			for (int i = 0; i < qTail[1 - expandIndex]; ++i) {
-				if (queues[1 - expandIndex][i].status == curStatus) {
-					startIndex[1 - expandIndex] = i;
-					break;
-				}
+	private static Node deepCopy(Node node) {
+		Node cur = new Node();
+		cur.x = node.x;
+		cur.y = node.y;
+		for (int i = 0; i < 3; ++i) {
+			for (int j = 0; j < 3; ++j) {
+				cur.graph[i][j] = node.graph[i][j];
 			}
-			return true;
 		}
-		for (int i = 0; i < 4; ++i) {
-			int newStatus = getNewStatus(curStatus, moves[i]);
-			if (newStatus == -1) {
-				continue;
-			}
-			if (flags[expandIndex][newStatus]) {
-				continue;
-			}
-			flags[expandIndex][newStatus] = true;
-			queues[expandIndex][qTail[expandIndex]++] = new Node(newStatus, qHead[expandIndex], (expandIndex == 1) ? reverseMove(moves[i]) : moves[i]);
-		}
-		++qHead[expandIndex];
-		return false;
+		cur.n = node.n;
+		return cur;
 	}
-	private static char reverseMove(char c) {
-		if (c == 'u') {
-			return 'd';
-		} else if (c == 'd') {
-			return 'u';
-		} else if (c == 'l') {
-			return 'r';
-		} else {
-			return '1';
-		}
-	}
-	private static int getNewStatus(int curStatus, char move) {
-		char[] chars = getPermutationByIndex(curStatus);
-		int zeroPos = 0;
-		for (int i = 0; i < 9; ++i) {
-			if(chars[i] == '0') {
-				zeroPos = i;
-				break;
-			}
-		}
-		if (move == 'u') {
-			if (zeroPos - 3 < 0) {
-				return -1;
-			} else {
-				chars[zeroPos] = chars[zeroPos - 3];
-				chars[zeroPos - 3] = '0';
-			}
-		} else if (move == 'd'){
-			if (zeroPos + 3 > 8) {
-				return -1;
-			} else {
-				chars[zeroPos] = chars[zeroPos + 3];
-				chars[zeroPos + 3] = '0';
-			}
-		} else if (move == 'l') {
-			if (zeroPos % 3 == 0) {
-				return -1;
-			} else {
-				chars[zeroPos] = chars[zeroPos - 1];
-				chars[zeroPos - 1] = '0';
-			}
-		} else {
-			if (zeroPos % 3 == 2) {
-				return -1;
-			} else {
-				chars[zeroPos] = chars[zeroPos + 1];
-				chars[zeroPos + 1] = '0';
-			}
-		}
-		return getPermutationIndex(chars);
+	private static void swap(char[][] graph, int x, int y, int newX, int newY) {
+		char c = graph[x][y];
+		graph[x][y] = graph[newX][newY];
+		graph[newX][newY] = c;
 	}
 }
